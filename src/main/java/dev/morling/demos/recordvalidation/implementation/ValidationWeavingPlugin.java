@@ -22,16 +22,27 @@ public class ValidationWeavingPlugin implements Plugin {
     public boolean matches(TypeDescription target) {
         return target.getDeclaredMethods()
                 .stream()
-                .filter(m -> m.isConstructor() && hasConstrainedParameter(m))
+                .filter(m -> m.isConstructor() && isConstrained(m))
                 .findFirst()
                 .isPresent();
     }
 
     @Override
     public Builder<?> apply(Builder<?> builder, TypeDescription typeDescription, ClassFileLocator classFileLocator) {
-        return builder.constructor(this::hasConstrainedParameter)
+        return builder.constructor(this::isConstrained)
                 .intercept(SuperMethodCall.INSTANCE.andThen(
                         MethodDelegation.to(ValidationInterceptor.class)));
+    }
+
+    private boolean isConstrained(MethodDescription method) {
+        return hasConstrainedReturnValue(method) || hasConstrainedParameter(method);
+    }
+
+    private boolean hasConstrainedReturnValue(MethodDescription method) {
+        return !method.getDeclaredAnnotations()
+                .asTypeList()
+                .filter(hasAnnotation(annotationType(Constraint.class)))
+                .isEmpty();
     }
 
     private boolean hasConstrainedParameter(MethodDescription method) {

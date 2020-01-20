@@ -12,9 +12,4 @@ public record Car(
     @NotBlank String manufacturer,
     @NotNull @Size(min = 2, max = 14) String licensePlate,
     @Min(2) int seatCount) {
-
-//    @ParameterScriptAssert(lang="javascript", script = "false")
-//    public Car {
-//
-//    }
 }

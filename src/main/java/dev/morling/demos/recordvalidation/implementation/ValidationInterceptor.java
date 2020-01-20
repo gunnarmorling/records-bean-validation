@@ -22,8 +22,6 @@ public class ValidationInterceptor {
             .getValidator();
 
     public static <T> void validate(@Origin Constructor<T> constructor, @AllArguments Object[] args) {
-        System.out.println("Intercepted: " + constructor.getName());
-
         Set<ConstraintViolation<T>> violations = validator.forExecutables()
             .validateConstructorParameters(constructor, args);
 
@@ -50,7 +48,7 @@ public class ValidationInterceptor {
             }
         }
 
-        throw new IllegalStateException("No parameter node found");
+        return "";
     }
 
     private static int getParameterIndex(ConstraintViolation<?> cv) {
@@ -62,6 +60,6 @@ public class ValidationInterceptor {
             }
         }
 
-        throw new IllegalStateException("No parameter node found");
+        return -1;
     }
 }
