@@ -22,9 +22,7 @@ public class ValidationWeavingPlugin implements Plugin {
     public boolean matches(TypeDescription target) {
         return target.getDeclaredMethods()
                 .stream()
-                .filter(m -> m.isConstructor() && isConstrained(m))
-                .findFirst()
-                .isPresent();
+                .anyMatch(m -> m.isConstructor() && isConstrained(m));
     }
 
     @Override
@@ -49,9 +47,7 @@ public class ValidationWeavingPlugin implements Plugin {
         return method.getParameters()
                 .asDefined()
                 .stream()
-                .filter(p -> isConstrained(p))
-                .findFirst()
-                .isPresent();
+                .anyMatch(p -> isConstrained(p));
     }
 
     private boolean isConstrained(ParameterDescription.InDefinedShape parameter) {
